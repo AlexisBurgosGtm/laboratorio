@@ -80,7 +80,7 @@ function getView(){
                     <div class="form-group">
                         <label>Buscar por codigo o por nombre</label>
                         <div class="input-group">
-                            <input type="text" class="form-control negrita text-danger" id="txtFiltrar">
+                            <input type="text" class="form-control negrita text-danger" id="txtFiltrar" placeholder="Escriba un codigo o nombre para buscar...">
                             <button class="btn btn-info hand" id="btnBuscar">
                                 <i class="fal fa-search"></i>
                             </button>
@@ -104,7 +104,7 @@ function getView(){
                                     <td></td>
                                 </tr>
                             </thead>
-                            <tbody id="tblDataListado">
+                            <tbody id="tblDataClientes">
 
                             </tbody>
                         </table>
@@ -124,13 +124,18 @@ function getView(){
         },
         vista_nuevo:()=>{
             return `
-              <div class="card card-rounded col-sm-12 col-lg-5 col-xl-5 col-md-5 shadow">
+              <div class="card card-rounded col-sm-12 col-lg-7 col-xl-7 col-md-8 shadow">
                 <div class="card-body p-4">
 
                     <div class="form-group">
                         <label class="negrita">Empresa</label>
                         <select class="form-control negrita" id="cmbEmpresa">
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="negrita">CODIGO</label>
+                        <input type="text" class="form-control negrita" id="txtCodigo" autocomplete="off">
                     </div>
 
                     <div class="form-group">
@@ -199,12 +204,40 @@ function getView(){
 
                     </div>
 
+                    <hr class="solid">
+
+                    <h5 class="negrita text-danger text-center">Fotos del Individuo</h5>
             
                     <div class="row">
+                        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="card card-rounded shadow col-12">
+                                <div class="card-body p-5 text-center">
+                                    <label class="negrita">Foto Selfie</label>
+                                    <input type="file" id="txtFoto1" class="form-control" onchange="preview_img('txtFoto1','img1');">
+                                    <img src="" id="img1" width="150px" height="150px">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="card card-rounded shadow col-12">
+                                <div class="card-body p-5 text-center">
+                                    <label class="negrita">Foto DPI Front</label>
+                                    <input type="file" id="txtFoto2" class="form-control" onchange="preview_img('txtFoto2','img2');">
+                                     <img src="" id="img2" width="150px" height="150px">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="card card-rounded shadow col-12">
+                                <div class="card-body p-5 text-center">
+                                    <label class="negrita">Foto DPI Tras</label>
+                                    <input type="file" id="txtFoto3" class="form-control" onchange="preview_img('txtFoto3','img3');">
+                                     <img src="" id="img3" width="150px" height="150px">
+                                </div>
+                            </div>
+                        </div>
 
-                        <div class="card card-rounded col-sm-12 col-md shadow">
-                            <div class="card-body p-4">
-
+                        
 
                     </div>
 
@@ -243,7 +276,7 @@ function addListeners(){
         if(p==GlobalClave){
             document.getElementById('txtP').value = '';
             document.getElementById('tab-dos').click();
-            get_listado();
+            //get_listado();
         }else{
             F.AvisoError('Escriba una clave valida');
             return;
@@ -262,6 +295,70 @@ function addListeners(){
 
 
 
+    get_data_empresas()
+    .then((data)=>{
+        let str = '';
+        data.recordset.map((r)=>{
+            str +=`<option value='${r.CODIGO}'>${r.EMPRESA}</option>`
+        })
+        document.getElementById('cmbEmpresa').innerHTML = str;
+    })
+    .catch(()=>{
+        document.getElementById('cmbEmpresa').innerHTML = 'No hay datos'
+    })
+
+
+
+    let btnGuardar = document.getElementById('btnGuardar');
+    btnGuardar.addEventListener('click',()=>{
+
+        F.Confirmacion('Esta seguro que desea Crear este nuevo Cliente?')
+        .then((value)=>{
+            if(value==true){
+      
+                let codigo = document.getElementById('txtCodigo').value || '';
+                if(codigo==''){F.AvisoError('Escriba un codigo valido');return;}
+        
+                let dpi = document.getElementById('txtDPI').value || '';
+                if(dpi==''){F.AvisoError('Escriba un DPI CUI valido');return;}
+                
+                let nombre = document.getElementById('txtNombre').value || '';
+                if(nombre==''){F.AvisoError('Escriba un nombre valido');return;}
+        
+                
+                btnGuardar.disabled = true;
+                btnGuardar.innerHTML = `<i class="fal fa-save fa-spin"></i>`;
+
+                insert_cliente()
+                .then(()=>{
+                    F.Aviso('Cliente creado exitosamente!!');
+                    get_listado();
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
+
+                    document.getElementById('tab-dos').click();
+                
+                })
+                .catch(()=>{
+                    F.AvisoError('No se pudo crear este cliente');
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
+                
+                })
+
+
+            }
+        })
+
+      
+
+    })
+
+
+    document.getElementById('btnBuscar').addEventListener('click',()=>{
+        get_listado();
+    })
+
     F.slideAnimationTabs();
 
 };
@@ -276,14 +373,159 @@ function initView(){
 
 };
 
+function preview_img(idFile,idImage){
+
+    let file = document.getElementById(idFile).files[0]
+    F.converBase64(file)
+    .then((imagen)=>{
+        console.log(imagen)
+        document.getElementById(idImage).src = imagen;
+    })
+
+    console.log(valor)
+
+    return;
+
+    let globalPic = new Image();
+    globalPic.onload = function() {
+        document.getElementById(idImage).src = globalPic.src;
+    }
+    globalPic.src=what.value;
+}
+
+
+function get_data_empresas(){
+    return new Promise((resolve,reject)=>{
+        axios.post('/lista_empresas',{
+            param:0
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+}
 
 function limpiar_datos(){
 
+        document.getElementById('txtCodigo').value='';
+        document.getElementById('txtDPI').value='';
+        document.getElementById('txtNombre').value='';
+        document.getElementById('txtAreaTrabajo').value='';
+        document.getElementById('txtSector').value='';
+        document.getElementById('cmbTSalud').value='SN';
+        document.getElementById('cmbTAlimentacion').value='SN';
+        document.getElementById('cmbTPulmones').value='SN';
 
+        document.getElementById('txtFoto1').value = '';
+        document.getElementById('txtFoto2').value = '';
+        document.getElementById('txtFoto3').value = '';
+
+        document.getElementById('img1').src = './favicon.png';
+        document.getElementById('img2').src = './favicon.png';
+        document.getElementById('img3').src = './favicon.png';
 };
 
 
 function get_listado(){
 
+    let filtro = document.getElementById('txtFiltrar').value || '';
+    if(filtro==''){F.AvisoError('Escriba un codigo o nombre para buscar');return;}
+    let container = document.getElementById('tblDataClientes');
+    container.innerHTML = GlobalLoader;
+    let str = '';
+
+
+    axios.post('/listado_clientes',{
+        filtro:filtro
+    })
+    .then((response) => {
+        let data = response.data;
+        if(Number(data.rowsAffected[0])>0){
+            data.recordset.map((r)=>{
+                str += `
+                                <tr>
+                                    <td>${r.EMPRESA}</td>
+                                    <td>${r.CODIGO}</td>
+                                    <td>${r.NOMBRE}</td>
+                                    <td>${r.AREA}
+                                        <br>
+                                        <small>${r.SECTOR}</small>
+                                    </td>
+                                    <td>${r.SALUD}</td>
+                                    <td>${r.ALIMENTOS}</td>
+                                    <td>${r.PULMONES}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                `
+            })
+
+            container.innerHTML = str;
+        }else{
+            container.innerHTML = 'No hay datos...'
+        }             
+    }, (error) => {
+        container.innerHTML = 'No hay datos...'
+    });
+
 
 };
+
+
+
+function insert_cliente(){
+
+    
+
+    let codempresa = document.getElementById('cmbEmpresa').value;
+    let codigo = document.getElementById('txtCodigo').value;
+    let dpi = document.getElementById('txtDPI').value;
+    let nombre = document.getElementById('txtNombre').value;
+    let fecha = F.devuelveFecha('txtFechaNacimiento');
+    let area = document.getElementById('txtAreaTrabajo').value;
+    let sector = document.getElementById('txtSector').value;
+    let tsalud = document.getElementById('cmbTSalud').value;
+    let talimentos = document.getElementById('cmbTAlimentacion').value;
+    let tpulmones = document.getElementById('cmbTPulmones').value;
+    let f1 = document.getElementById('img1').src;
+    let f2 = document.getElementById('img2').src;
+    let f3 = document.getElementById('img3').src;
+
+
+    return new Promise((resolve,reject)=>{
+        axios.post('/insert_cliente',{
+            codempresa:codempresa,
+            codigo:codigo,
+            dpi:dpi,
+            nombre:nombre,
+            fecha:fecha,
+            area:area,
+            sector:sector,
+            tsalud:tsalud,
+            talimentos:talimentos,
+            tpulmones:tpulmones,
+            f1:f1,
+            f2:f2,
+            f3:f3
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+}

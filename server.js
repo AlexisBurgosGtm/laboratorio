@@ -14,6 +14,7 @@ var io = require('socket.io')(http, { cors: { origin: '*' } });
 
 
 const cors = require('cors');
+const { exec } = require("child_process");
 app.use(cors({
     origin: '*'
 }));
@@ -58,6 +59,8 @@ app.post("/lista_empresas",function(req,res){
 
     //const {} = req.query;
 
+    let qry = `SELECT CODEMPRESA AS CODIGO, EMPRESA FROM EMPRESAS`;
+    execute.Query(res,qry);
 
 }); 
 
@@ -94,15 +97,38 @@ app.post("/delete_empresa",function(req,res){
 
 app.post("/listado_clientes",function(req,res){
 
-  //const {} = req.query;
+    const {filtro} = req.body;
+
+  let qry = `
+ SELECT EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
+                  CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES
+FROM     CLIENTES LEFT OUTER JOIN
+                  EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
+      WHERE CLIENTES.NOMBRE LIKE '%${filtro}%' OR CLIENTES.CODIGO='${filtro}' 
+  `
+
+  execute.Query(res,qry);
 
 
 }); 
 
 app.post("/insert_cliente",function(req,res){
 
-  //const {} = req.query;
+  const {codempresa,codigo,dpi,nombre,fecha,area,sector,tsalud,talimentos,tpulmones,f1,f2,f3} = req.body;
 
+
+  let qry = `
+    INSERT INTO CLIENTES (CODIGO,CODEMPRESA,DPI,NOMBRE,FECHA_NACIMIENTO,AREA_TRABAJO,SECTOR,TARJETA_SALUD,TARJETA_ALIMENTOS,
+      TARJETA_PULMONES,FOTO_SELFIE,FOTO_DPI_1,FOTO_DPI_2) 
+      SELECT '${codigo}' AS CODIGO, ${codempresa} AS CODEMPRESA, '${dpi}' AS DPI,
+      '${nombre}' AS NOMBRE, '${fecha}' AS FECHA_NACIMIENTO, '${area}' AS AREA_TRABAJO,
+      '${sector}' AS SECTOR, '${tsalud}' AS TARJETA_SALUD, '${talimentos}' AS TARJETA_ALIMENTOS,
+      '${tpulmones}' AS TARJETA_PULMONES,'${f1}' AS FOTO_SELFIE,
+      '${f2}' AS FOTO_DPI_1, '${f3}' AS FOTO_DPI_2
+
+  `
+
+  execute.Query(res,qry);
 
 }); 
 

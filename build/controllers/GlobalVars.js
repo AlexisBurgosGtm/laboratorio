@@ -1,4 +1,4 @@
-let GlobalClave = 'laboratorio'
+let GlobalClave = '123'
 
 let map; //mapa de leaflet
 

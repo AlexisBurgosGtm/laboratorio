@@ -558,7 +558,23 @@ let F = {
       window.print();
       document.body.innerHTML = contenidoOriginal;
       
-    }
+    },
+    converBase64:(file)=>{
+      return new Promise((resolve, reject)=>{
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = function() {
+                //console.log(reader.result);
+                resolve(reader.result);
+          };
+          reader.onerror = function(e){
+                console.log('Error: ', e);
+                reject(e);
+          };
+      })
+
+    
+    },
 };
 
 //export default funciones;
