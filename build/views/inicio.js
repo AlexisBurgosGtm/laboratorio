@@ -577,45 +577,62 @@ function addListeners(){
     let btnGuardar = document.getElementById('btnGuardar');
     btnGuardar.addEventListener('click',()=>{
 
-        F.Confirmacion('Esta seguro que desea Crear este nuevo Cliente?')
-        .then((value)=>{
-            if(value==true){
-      
-                let codigo = document.getElementById('txtCodigo').value || '';
-                if(codigo==''){F.AvisoError('Escriba un codigo valido');return;}
-        
-                let dpi = document.getElementById('txtDPI').value || '';
-                if(dpi==''){F.AvisoError('Escriba un DPI CUI valido');return;}
-                
-                let nombre = document.getElementById('txtNombre').value || '';
-                if(nombre==''){F.AvisoError('Escriba un nombre valido');return;}
-        
-                
-                btnGuardar.disabled = true;
-                btnGuardar.innerHTML = `<i class="fal fa-save fa-spin"></i>`;
+        let codigo = document.getElementById('txtCodigo').value || '';
+        if(codigo==''){F.AvisoError('Escriba un codigo valido');return;}
 
-                insert_cliente()
-                .then(()=>{
-                    F.Aviso('Cliente creado exitosamente!!');
+        let codempresa = document.getElementById('cmbEmpresa').value;
+
+        F.showToast('Verificando codigo');
+
+        verify_cod_cliente(codempresa,codigo)
+        .then(()=>{
+
+            F.Confirmacion('Esta seguro que desea Crear este nuevo Cliente?')
+            .then((value)=>{
+                if(value==true){
+          
+                   
+            
+                    let dpi = document.getElementById('txtDPI').value || '';
+                    if(dpi==''){F.AvisoError('Escriba un DPI CUI valido');return;}
                     
-                    //get_listado();
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
+                    let nombre = document.getElementById('txtNombre').value || '';
+                    if(nombre==''){F.AvisoError('Escriba un nombre valido');return;}
+            
+                    
+                    btnGuardar.disabled = true;
+                    btnGuardar.innerHTML = `<i class="fal fa-save fa-spin"></i>`;
+    
+                    insert_cliente()
+                    .then(()=>{
+                        F.Aviso('Cliente creado exitosamente!!');
+                        
+                        //get_listado();
+                        btnGuardar.disabled = false;
+                        btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
+    
+                        document.getElementById('tab-dos').click();
+                    
+                    })
+                    .catch(()=>{
+                        F.AvisoError('No se pudo crear este cliente');
+                        btnGuardar.disabled = false;
+                        btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
+                    
+                    })
+    
+    
+                }
+            })
 
-                    document.getElementById('tab-dos').click();
-                
-                })
-                .catch(()=>{
-                    F.AvisoError('No se pudo crear este cliente');
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
-                
-                })
-
-
-            }
+            
+        })
+        .catch(()=>{
+            F.AvisoError('Este codigo ya existe en esta empresa, utilice otro');
         })
 
+
+    
       
 
     })
@@ -1126,3 +1143,26 @@ function update_datos_cliente(){
     })
 
 };
+
+
+
+
+function verify_cod_cliente(codempresa,codigo){
+    return new Promise((resolve,reject)=>{
+        axios.post('/verify_codigo',{
+            codigo:codigo,
+            codempresa:codempresa
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                reject();
+            }else{
+                resolve(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+}

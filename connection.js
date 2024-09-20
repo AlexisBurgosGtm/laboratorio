@@ -8,13 +8,6 @@ let config = {
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
 
-let configx = {
-	user: 'iEx',
-	password: 'iEx',
-	server: 'DESKTOP-3L7R1E4\\SQL22',
-	database: 'laboratorio',
-	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
-};
 
 
 const sql = require('mssql');

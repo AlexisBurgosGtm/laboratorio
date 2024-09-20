@@ -95,6 +95,19 @@ app.post("/delete_empresa",function(req,res){
 //CLIENTES
 //-------------------------------
 
+
+app.post("/verify_codigo",function(req,res){
+
+  const {codigo,codempresa} = req.body;
+
+  let qry = `SELECT CODIGO, CODEMPRESA 
+              FROM CLIENTES
+              WHERE CODEMPRESA=${codempresa} AND CODIGO='${codigo}';`;
+
+  execute.Query(res,qry);
+
+}); 
+
 app.post("/listado_clientes",function(req,res){
 
       const {filtro,lastupdate,st} = req.body;
