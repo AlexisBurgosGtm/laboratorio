@@ -10,6 +10,10 @@ let F = {
       }
         
     },
+    clean_date(date) {
+        let dateF = date.replace('T00:00:00.000Z', '');
+        return dateF;
+    },
     instalationHandlers: (idBtnInstall)=>{
       //INSTALACION APP
       let btnInstalarApp = document.getElementById(idBtnInstall);

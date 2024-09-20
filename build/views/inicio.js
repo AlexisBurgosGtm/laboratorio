@@ -87,13 +87,18 @@ function getView(){
                     <div class="form-group">
                         <label class="negrita">Buscar por codigo o por nombre</label>
                         <div class="input-group">
-                            <input type="text" class="form-control negrita text-danger" autocomplete="off" id="txtFiltrar" placeholder="Escriba un codigo o nombre para buscar...">
+                            <input type="text" class="form-control negrita text-danger border-naranja " autocomplete="off" id="txtFiltrar" placeholder="Escriba un codigo o nombre para buscar...">
                             
-                            <input type="date" class="form-control negrita text-info" id="txtFechaAtencion">
-
                             <button class="btn btn-info hand" id="btnBuscar">
                                 <i class="fal fa-search"></i>
                             </button>
+                        </div>
+                        <div class="input-group">    
+                            <input type="date" class="form-control negrita text-info" id="txtFechaAtencion">
+                            <select class="form-control negrita" id="cmbTipoLista">
+                                <option class="negrita text-danger" value="PENDIENTES">PENDIENTES</option>
+                                <option class="negrita text-success" value="ATENDIDOS">ATENDIDOS</option>
+                            </select>
                         </div>
                     </div>
                     
@@ -134,7 +139,7 @@ function getView(){
         },
         vista_nuevo:()=>{
             return `
-              <div class="card card-rounded col-sm-12 col-lg-7 col-xl-7 col-md-8 shadow">
+              <div class="card card-rounded col-sm-12 col-lg-8 col-xl-8 col-md-12 shadow">
                 <div class="card-body p-4">
 
                     <div class="form-group">
@@ -404,14 +409,8 @@ function getView(){
                             <div class="card-body">
                                 
 
-                                <div class="form-group">
-                                    <h3 class="negrita text-info" id="lbNomclienteE">CONSUMIDOR FINAL</h3>
-                                    
-                                    <label class="negrita text-danger" id="lbCodclienteE">0000</label>
-                                </div>
-
                                 <hr class="solid">
-
+                                <div class="negrita text-secondary" id="lbStatusDatos"></div>
 
                                  <div class="form-group">
                                     <label class="negrita">Empresa</label>
@@ -421,7 +420,7 @@ function getView(){
 
                                 <div class="form-group">
                                     <label class="negrita">CODIGO</label>
-                                    <input type="text" class="form-control negrita" id="txtCodigoE" autocomplete="off">
+                                    <input type="text" class="form-control negrita" id="txtCodigoE" autocomplete="off" disabled="true">
                                 </div>
 
                                 <div class="form-group">
@@ -564,9 +563,13 @@ function addListeners(){
             str +=`<option value='${r.CODIGO}'>${r.EMPRESA}</option>`
         })
         document.getElementById('cmbEmpresa').innerHTML = str;
+        document.getElementById('cmbEmpresaE').innerHTML = str;
+        
     })
     .catch(()=>{
-        document.getElementById('cmbEmpresa').innerHTML = 'No hay datos'
+        document.getElementById('cmbEmpresa').innerHTML = 'No hay datos';
+        document.getElementById('cmbEmpresaE').innerHTML = 'No hay datos';
+        
     })
 
 
@@ -594,7 +597,8 @@ function addListeners(){
                 insert_cliente()
                 .then(()=>{
                     F.Aviso('Cliente creado exitosamente!!');
-                    get_listado();
+                    
+                    //get_listado();
                     btnGuardar.disabled = false;
                     btnGuardar.innerHTML = `<i class="fal fa-save"></i>`;
 
@@ -670,6 +674,50 @@ function addListeners(){
 
             }
         })
+
+    });
+
+    let btnActualizarDatos = document.getElementById('btnActualizarDatos');
+    btnActualizarDatos.addEventListener('click',()=>{
+
+
+        
+        F.Confirmacion('Esta seguro que desea EDITAR este Cliente?')
+        .then((value)=>{
+            if(value==true){
+          
+                let dpi = document.getElementById('txtDPIE').value || '';
+                if(dpi==''){F.AvisoError('Escriba un DPI CUI valido');return;}
+                
+                let nombre = document.getElementById('txtNombreE').value || '';
+                if(nombre==''){F.AvisoError('Escriba un nombre valido');return;}
+        
+                
+                btnActualizarDatos.disabled = true;
+                btnActualizarDatos.innerHTML = `<i class="fal fa-save fa-spin"></i>`;
+        
+                update_datos_cliente()
+                .then(()=>{
+                    F.Aviso('Cliente actualizado exitosamente!!');
+                            
+                    //get_listado();
+                    btnActualizarDatos.disabled = false;
+                    btnActualizarDatos.innerHTML = `<i class="fal fa-save"></i>`;
+        
+                    $("#modal_datos").modal('hide');
+                })
+                .catch(()=>{
+                    F.AvisoError('No se pudo crear este cliente');
+                    btnActualizarDatos.disabled = false;
+                    btnActualizarDatos.innerHTML = `<i class="fal fa-save"></i>`;
+                })
+        
+
+            }
+        })
+
+
+      
 
     });
 
@@ -776,11 +824,13 @@ function get_listado(){
     let str = '';
 
     let lastupdate = F.devuelveFecha('txtFechaAtencion'); //document.getElementById("cmbStatus").value;
+    let st = document.getElementById('cmbTipoLista').value;
 
 
     axios.post('/listado_clientes',{
         filtro:filtro,
-        lastupdate:lastupdate
+        lastupdate:lastupdate,
+        st:st
     })
     .then((response) => {
         let data = response.data;
@@ -973,7 +1023,45 @@ function get_datos_cliente(codempresa,codcliente){
    
     $("#modal_datos").modal('show');
 
+    document.getElementById('lbStatusDatos').innerHTML = '';
+    document.getElementById('lbStatusDatos').innerHTML = 'Cargando datos...' + GlobalLoader;
+    
 
+
+    get_data_datos_cliente(codempresa,codcliente)
+    .then((data)=>{
+
+        data.recordset.map((r)=>{
+            document.getElementById('cmbEmpresaE').value=r.CODEMPRESA;
+            document.getElementById('txtCodigoE').value=r.CODIGO;
+            document.getElementById('txtDPIE').value=r.DPI;
+            document.getElementById('txtNombreE').value=r.NOMBRE;
+            document.getElementById('txtFechaNacimientoE').value= F.clean_date(r.FECHA_NACIMIENTO);
+            document.getElementById('txtAreaTrabajoE').value=r.AREA_TRABAJO;
+            document.getElementById('txtSectorE').value=r.SECTOR;
+            document.getElementById('cmbTSaludE').value=r.TARJETA_SALUD;
+            document.getElementById('cmbTAlimentacionE').value=r.TARJETA_ALIMENTOS;
+            document.getElementById('cmbTPulmonesE').value=r.TARJETA_PULMONES;    
+        })
+        document.getElementById('lbStatusDatos').innerHTML = '';
+        
+    })
+    .catch(()=>{
+        
+        document.getElementById('lbStatusDatos').innerHTML = '';
+     
+        document.getElementById('txtCodigo').value='';
+        document.getElementById('txtDPI').value.value='';
+        document.getElementById('txtNombre').value.value='';
+        document.getElementById('txtFechaNacimiento').value = F.getFecha();
+        document.getElementById('txtAreaTrabajo').value='';
+        document.getElementById('txtSector').value='';
+        document.getElementById('cmbTSalud').value='SN';
+        document.getElementById('cmbTAlimentacion').value='SN';
+        document.getElementById('cmbTPulmones').value='SN';
+
+
+    })
 
 };
 
@@ -982,6 +1070,48 @@ function get_data_datos_cliente(codempresa,codcliente){
         axios.post('/datos_cliente',{
             codempresa:codempresa,
             codigo:codcliente
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+};
+
+function update_datos_cliente(){
+
+    let codempresa = document.getElementById('cmbEmpresaE').value;
+    let codigo = document.getElementById('txtCodigoE').value;
+    let dpi = document.getElementById('txtDPIE').value;
+    let nombre = F.limpiarTexto(document.getElementById('txtNombreE').value);
+    let fechanacimiento = F.devuelveFecha('txtFechaNacimientoE');
+    let fecha = F.getFecha();
+    let area = F.limpiarTexto(document.getElementById('txtAreaTrabajoE').value);
+    let sector = F.limpiarTexto(document.getElementById('txtSectorE').value);
+    let tsalud = document.getElementById('cmbTSaludE').value;
+    let talimentos = document.getElementById('cmbTAlimentacionE').value;
+    let tpulmones = document.getElementById('cmbTPulmonesE').value;
+ 
+    return new Promise((resolve,reject)=>{
+        axios.post('/edit_cliente',{
+            codempresa:codempresa,
+            codigo:codigo,
+            dpi:dpi,
+            nombre:nombre,
+            fecha:fecha,
+            fechanacimiento:fechanacimiento,
+            area:area,
+            sector:sector,
+            tsalud:tsalud,
+            talimentos:talimentos,
+            tpulmones:tpulmones
         })
         .then((response) => {
             let data = response.data;

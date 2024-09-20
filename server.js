@@ -97,31 +97,52 @@ app.post("/delete_empresa",function(req,res){
 
 app.post("/listado_clientes",function(req,res){
 
-    const {filtro,lastupdate} = req.body;
+      const {filtro,lastupdate,st} = req.body;
+
+      if(st=='PENDIENTES'){
+            if(filtro=='TODOS'){
+              qry = `
+              SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
+                                CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
+              FROM     CLIENTES LEFT OUTER JOIN
+                                EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
+                    WHERE CLIENTES.LASTUPDATE <> '${lastupdate}'   
+              `
+            }else{
+              qry = `
+              SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
+                                CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
+              FROM     CLIENTES LEFT OUTER JOIN
+                                EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
+                    WHERE CLIENTES.NOMBRE LIKE '%${filtro}%' AND CLIENTES.LASTUPDATE <> '${lastupdate}' 
+                    OR CLIENTES.CODIGO='${filtro}' AND CLIENTES.LASTUPDATE <> '${lastupdate}'  
+                `
+            }   
+      }else{
+          if(filtro=='TODOS'){
+            qry = `
+            SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
+                              CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
+            FROM     CLIENTES LEFT OUTER JOIN
+                              EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
+                  WHERE CLIENTES.LASTUPDATE = '${lastupdate}'   
+            `
+          }else{
+            qry = `
+            SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
+                              CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
+            FROM     CLIENTES LEFT OUTER JOIN
+                              EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
+                  WHERE CLIENTES.NOMBRE LIKE '%${filtro}%' AND CLIENTES.LASTUPDATE = '${lastupdate}' 
+                  OR CLIENTES.CODIGO='${filtro}' AND CLIENTES.LASTUPDATE = '${lastupdate}'  
+              `
+          }   
+      }
 
 
+   
 
-    if(filtro=='PENDIENTES'){
-      qry = `
-      SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
-                        CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
-      FROM     CLIENTES LEFT OUTER JOIN
-                        EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
-            WHERE CLIENTES.LASTUPDATE <> '${lastupdate}'   
-        `
-    }else{
-      qry = `
-      SELECT CLIENTES.CODEMPRESA, EMPRESAS.EMPRESA, CLIENTES.CODIGO, CLIENTES.DPI, CLIENTES.NOMBRE, CLIENTES.FECHA_NACIMIENTO, CLIENTES.AREA_TRABAJO AS AREA, CLIENTES.SECTOR, CLIENTES.TARJETA_SALUD AS SALUD, 
-                        CLIENTES.TARJETA_ALIMENTOS AS ALIMENTOS, CLIENTES.TARJETA_PULMONES AS PULMONES, ATENDIDO, ISNULL(LASTUPDATE,'2024-01-01') AS LASTUPDATE
-      FROM     CLIENTES LEFT OUTER JOIN
-                        EMPRESAS ON CLIENTES.CODEMPRESA = EMPRESAS.CODEMPRESA
-            WHERE CLIENTES.NOMBRE LIKE '%${filtro}%' AND CLIENTES.LASTUPDATE <> '${lastupdate}' 
-            OR CLIENTES.CODIGO='${filtro}' AND CLIENTES.LASTUPDATE <> '${lastupdate}'  
-        `
-
-    }
-
-  execute.Query(res,qry);
+    execute.Query(res,qry);
 
 
 }); 
@@ -149,17 +170,25 @@ app.post("/insert_cliente",function(req,res){
 
 app.post("/edit_cliente",function(req,res){
 
-  const {codempresa,codigo,dpi,nombre,fecha,area,sector,tsalud,talimentos,tpulmones,f1,f2,f3} = req.body;
+  const {codempresa,codigo,dpi,nombre,fechanacimiento,fecha,area,sector,tsalud,talimentos,tpulmones} = req.body;
 
 
   let qry = `
-    INSERT INTO CLIENTES (CODIGO,CODEMPRESA,DPI,NOMBRE,FECHA_NACIMIENTO,AREA_TRABAJO,SECTOR,TARJETA_SALUD,TARJETA_ALIMENTOS,
-      TARJETA_PULMONES,FOTO_SELFIE,FOTO_DPI_1,FOTO_DPI_2) 
-      SELECT '${codigo}' AS CODIGO, ${codempresa} AS CODEMPRESA, '${dpi}' AS DPI,
-      '${nombre}' AS NOMBRE, '${fecha}' AS FECHA_NACIMIENTO, '${area}' AS AREA_TRABAJO,
-      '${sector}' AS SECTOR, '${tsalud}' AS TARJETA_SALUD, '${talimentos}' AS TARJETA_ALIMENTOS,
-      '${tpulmones}' AS TARJETA_PULMONES,'${f1}' AS FOTO_SELFIE,
-      '${f2}' AS FOTO_DPI_1, '${f3}' AS FOTO_DPI_2
+    UPDATE CLIENTES SET 
+          DPI='${dpi}',
+          NOMBRE='${nombre}',
+          FECHA_NACIMIENTO='${fechanacimiento}',
+          AREA_TRABAJO='${area}',
+          SECTOR='${sector}',
+          TARJETA_SALUD='${tsalud}',
+          TARJETA_ALIMENTOS='${talimentos}',
+        TARJETA_PULMONES='${tpulmones}',
+        LASTUPDATE='${fecha}'
+    WHERE
+    CODEMPRESA=${codempresa} AND CODIGO='${codigo}'
+
+
+    
 
   `
 
@@ -188,7 +217,7 @@ app.post("/datos_cliente",function(req,res){
 
 
   let qry = `
-      SELECT CODEMPRESA,
+      SELECT CODEMPRESA,CODIGO,
             DPI,NOMBRE, FECHA_NACIMIENTO,
             AREA_TRABAJO, SECTOR,
             TARJETA_SALUD, TARJETA_ALIMENTOS,
