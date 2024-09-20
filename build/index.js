@@ -1,7 +1,4 @@
 ﻿
-let versionapp = "Modif: 15.09.2024"
-
-
 
 
 function InicializarServiceWorkerNotif(){

@@ -54,11 +54,11 @@ function getView(){
                     
                     <br>
                     
-                    <h2>Laboratorio Clinico Bioquimica</h2>
+                    <h2 class="text-center">Laboratorio Clinico Bioquimica</h2>
 
                     <br>
                     
-                    <div class="form-group">
+                    <div class="form-group text-center">
                         <label class="negrita">Clave de acceso</label>
                         <input type="password" class="form-control negrita" id="txtP" autocomplete="off">
                     </div>
@@ -70,6 +70,9 @@ function getView(){
                             <i class="fal fa-lock"></i>
                         </button> 
                     </div>
+
+                    <br>
+                    <small class="negrita text-naranja">By Alexis Burgos (${versionapp})</small>
 
 
                 </div>

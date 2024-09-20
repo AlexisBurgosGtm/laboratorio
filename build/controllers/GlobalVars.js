@@ -1,3 +1,8 @@
+
+
+let versionapp = "Modif: 19.09.2024"
+
+
 let GlobalClave = '123'
 
 let map; //mapa de leaflet
