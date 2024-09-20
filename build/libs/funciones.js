@@ -575,6 +575,112 @@ let F = {
 
     
     },
+    getImageFromBase64:(data)=>{
+        let buff = new Buffer(data, 'base64');
+        return fs.writeFileSync('stack-abuse-logo-out.png', buff);
+    },
+    getEdad:(fech)=>{
+      
+    
+      try {
+        
+                        // Si la fecha es correcta, calculamos la edad
+                let fecha = fech.replace('T06:00:00.000Z','').replace('T00:00:00.000Z','');
+
+                if (typeof fecha != "string" && fecha && esNumero(fecha.getTime())) {
+                  fecha = formatDate(fecha, "yyyy-MM-dd");
+              }
+
+              var values = fecha.split("-");
+              var dia = values[2];
+              var mes = values[1];
+              var ano = values[0];
+              
+          
+              // cogemos los valores actuales
+              var fecha_hoy = new Date();
+              var ahora_ano = fecha_hoy.getYear();
+              var ahora_mes = fecha_hoy.getMonth() + 1;
+              var ahora_dia = fecha_hoy.getDate();
+
+              // realizamos el calculo
+              var edad = (ahora_ano + 1900) - ano;
+              if (ahora_mes < mes) {
+                  edad--;
+              }
+              if ((mes == ahora_mes) && (ahora_dia < dia)) {
+                  edad--;
+              }
+              if (edad > 1900) {
+                  edad -= 1900;
+              }
+
+              // calculamos los meses
+              var meses = 0;
+
+              if (ahora_mes > mes && dia > ahora_dia)
+                  meses = ahora_mes - mes - 1;
+              else if (ahora_mes > mes)
+                  meses = ahora_mes - mes
+              if (ahora_mes < mes && dia < ahora_dia)
+                  meses = 12 - (mes - ahora_mes);
+              else if (ahora_mes < mes)
+                  meses = 12 - (mes - ahora_mes + 1);
+              if (ahora_mes == mes && dia > ahora_dia)
+                  meses = 11;
+
+              // calculamos los dias
+              var dias = 0;
+              if (ahora_dia > dia)
+                  dias = ahora_dia - dia;
+              if (ahora_dia < dia) {
+                  ultimoDiaMes = new Date(ahora_ano, ahora_mes - 1, 0);
+                  dias = ultimoDiaMes.getDate() - (dia - ahora_dia);
+              }
+
+              //return edad + " años, " + meses + " meses y " + dias + " días";
+              return  edad + " años," + meses +  " meses";
+      } catch (error) {
+          return '0'
+      }
+
+
+    },
+    comprimir_imagen:(file)=>{
+
+      let img = F.getImageFromBase64(file);
+
+      console.log(img)
+      
+      new Compressor(img, {
+        quality: 0.6,
+    
+        // The compression process is asynchronous,
+        // which means you have to access the `result` in the `success` hook function.
+        success(result) {
+          console.log(result)
+          return result
+          // The third parameter is required for server
+          //formData.append('file', result, result.name);
+    
+        },
+        error(err) {
+          console.log(err.message);
+        }
+
+      })
+
+    },
+    detectarPc:()=>{
+          let navegador = navigator.userAgent;
+          if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+              //console.log("Estás usando un dispositivo móvil!!");
+            return 'tel';
+          } else {
+              //console.log("No estás usando un móvil");
+            return 'pc';
+          }
+    },
 };
 
 //export default funciones;

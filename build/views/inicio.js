@@ -9,7 +9,7 @@ function getView(){
                            ${view.vista_login()}
                         </div>
                         <div class="tab-pane fade" id="dos" role="tabpanel" aria-labelledby="home-tab">
-                            ${view.vista_listado()}
+                            ${view.vista_listado() + view.modal_fotos() + view.modal_datos()}
                         </div>
                         <div class="tab-pane fade" id="tres" role="tabpanel" aria-labelledby="home-tab">
                             ${view.vista_nuevo()}
@@ -54,6 +54,10 @@ function getView(){
                     
                     <br>
                     
+                    <h2>Laboratorio Clinico Bioquimica</h2>
+
+                    <br>
+                    
                     <div class="form-group">
                         <label class="negrita">Clave de acceso</label>
                         <input type="password" class="form-control negrita" id="txtP" autocomplete="off">
@@ -75,12 +79,15 @@ function getView(){
         vista_listado:()=>{
             return `
             <div class="card card-rounded shadow col-12">
-                <div class="card-body p-2">
+                <div class="card-body p-3">
 
                     <div class="form-group">
-                        <label>Buscar por codigo o por nombre</label>
+                        <label class="negrita">Buscar por codigo o por nombre</label>
                         <div class="input-group">
-                            <input type="text" class="form-control negrita text-danger" id="txtFiltrar" placeholder="Escriba un codigo o nombre para buscar...">
+                            <input type="text" class="form-control negrita text-danger" autocomplete="off" id="txtFiltrar" placeholder="Escriba un codigo o nombre para buscar...">
+                            
+                            <input type="date" class="form-control negrita text-info" id="txtFechaAtencion">
+
                             <button class="btn btn-info hand" id="btnBuscar">
                                 <i class="fal fa-search"></i>
                             </button>
@@ -257,7 +264,262 @@ function getView(){
         },
         vista_editar:()=>{
 
-        }
+        },
+        modal_empresas:()=>{
+            return `
+        <div class="modal fade js-modal-settings modal-backdrop-transparent  modal-with-scroll" tabindex="-1" role="dialog" aria-hidden="true" id="modal_menu_principal">
+            <div class="modal-dialog modal-dialog-right modal-xl">
+                <div class="modal-content">
+                   
+                    <div class="modal-body p-2">
+                        <div class="card card-rounded shadow p-2">
+                            <div class="card-body">
+                                
+                                <div class="form-group">
+                                    <label>Nombre de la Empresa</label>
+                                    <input type="text" class="form-control negrita" id="txtNombreEmpesa">
+                                </div>
+
+                            
+                                <div class="form-group text-rigth">
+
+                                    <button class="btn btn-xl btn-circle btn-info hand shadow" id="btnGuardarEmpresa">
+                                        <i class="fal fa-save"></i>
+                                    </button>
+                                
+                                </div>
+                            
+                                <br>
+                                <table class="table table-responsive h-full">
+                                    
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <button class="btn btn-circle btn-xl btn-secondary hand shadow" data-dismiss="modal">
+                            <i class="fal fa-arrow-left"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+            
+            `
+        },
+        modal_fotos:()=>{
+            return `
+        <div class="modal fade js-modal-settings modal-backdrop-transparent  modal-with-scroll" tabindex="-1" role="dialog" aria-hidden="true" id="modal_fotos">
+            <div class="modal-dialog modal-dialog-right modal-xl">
+                <div class="modal-content">
+                   
+                    <div class="modal-body p-2">
+                        <div class="card card-rounded shadow p-2">
+                            <div class="card-body">
+                                
+
+                                <div class="form-group">
+                                    <h3 class="negrita text-info" id="lbNomcliente">CONSUMIDOR FINAL</h3>
+                                    
+                                    <label class="negrita text-danger" id="lbCodcliente">0000</label>
+                                </div>
+
+                                <hr class="solid">
+
+                                <h5 class="negrita text-danger text-center">Fotos del Individuo</h5>
+                                <div class="negrita text-secondary" id="lbStatusFotos"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="card card-rounded shadow col-12">
+                                            <div class="card-body p-5 text-center">
+                                                <label class="negrita">Foto Selfie</label>
+                                                <input type="file" id="txtFoto1E" class="form-control" onchange="preview_img('txtFoto1E','img1E');">
+                                                <img src="" id="img1E" width="150px" height="150px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="card card-rounded shadow col-12">
+                                            <div class="card-body p-5 text-center">
+                                                <label class="negrita">Foto DPI Front</label>
+                                                <input type="file" id="txtFoto2E" class="form-control" onchange="preview_img('txtFoto2E','img2E');">
+                                                <img src="" id="img2E" width="150px" height="150px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="card card-rounded shadow col-12">
+                                            <div class="card-body p-5 text-center">
+                                                <label class="negrita">Foto DPI Tras</label>
+                                                <input type="file" id="txtFoto3E" class="form-control" onchange="preview_img('txtFoto3E','img3E');">
+                                                <img src="" id="img3E" width="150px" height="150px">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 text-left">
+                                        <button class="btn btn-circle btn-xl btn-secondary hand shadow" data-dismiss="modal">
+                                            <i class="fal fa-arrow-left"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-info btn-circle btn-xl hand shadow" id="btnActualizarFotos">
+                                            <i class="fal fa-save"></i>
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            
+                                
+                              
+
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+            
+            `
+        },
+        modal_datos:()=>{
+            return `
+        <div class="modal fade js-modal-settings modal-backdrop-transparent  modal-with-scroll" tabindex="-1" role="dialog" aria-hidden="true" id="modal_datos">
+            <div class="modal-dialog modal-dialog-right modal-xl">
+                <div class="modal-content">
+                   
+                    <div class="modal-body p-2">
+                        <div class="card card-rounded shadow p-2">
+                            <div class="card-body">
+                                
+
+                                <div class="form-group">
+                                    <h3 class="negrita text-info" id="lbNomclienteE">CONSUMIDOR FINAL</h3>
+                                    
+                                    <label class="negrita text-danger" id="lbCodclienteE">0000</label>
+                                </div>
+
+                                <hr class="solid">
+
+
+                                 <div class="form-group">
+                                    <label class="negrita">Empresa</label>
+                                    <select class="form-control negrita" id="cmbEmpresaE">
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">CODIGO</label>
+                                    <input type="text" class="form-control negrita" id="txtCodigoE" autocomplete="off">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">DPI CUI</label>
+                                    <input type="text" class="form-control negrita" id="txtDPIE" autocomplete="off">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">Apellidos y Nombres</label>
+                                    <input type="text" class="form-control negrita" id="txtNombreE" autocomplete="off">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">Fecha Nacimiento</label>
+                                    <input type="date" class="form-control negrita" id="txtFechaNacimientoE">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">Area de Trabajo</label>
+                                    <input type="text" class="form-control negrita" id="txtAreaTrabajoE">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="negrita">Sector</label>
+                                    <input type="text" class="form-control negrita" id="txtSectorE">
+                                </div>
+
+                                <hr class="solid">
+
+                                <h5 class="negrita text-danger text-center">Tarjetas</h5>
+
+                                <div class="row">
+                                    
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="negrita">T. Salud</label>
+                                            <select class="form-control negrita" id="cmbTSaludE">
+                                                <option value="SN">SN</option>
+                                                <option value="SI">SI</option>
+                                                <option value="NO">NO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="negrita">T. Alimentos</label>
+                                            <select class="form-control negrita" id="cmbTAlimentacionE">
+                                                <option value="SN">SN</option>
+                                                <option value="SI">SI</option>
+                                                <option value="NO">NO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="negrita">T. Pulmones</label>
+                                            <select class="form-control negrita" id="cmbTPulmonesE">
+                                                <option value="SN">SN</option>
+                                                <option value="SI">SI</option>
+                                                <option value="NO">NO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                               
+                                <div class="row">
+                                    <div class="col-6 text-left">
+                                        <button class="btn btn-circle btn-xl btn-secondary hand shadow" data-dismiss="modal">
+                                            <i class="fal fa-arrow-left"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-info btn-circle btn-xl hand shadow" id="btnActualizarDatos">
+                                            <i class="fal fa-save"></i>
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            
+                                
+                              
+
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+            
+            `
+        },
     }
 
     root.innerHTML = view.body();
@@ -292,7 +554,7 @@ function addListeners(){
 
 
     document.getElementById('txtFechaNacimiento').value = F.getFecha();
-
+    document.getElementById('txtFechaAtencion').value = F.getFecha();
 
 
     get_data_empresas()
@@ -355,9 +617,64 @@ function addListeners(){
     })
 
 
+
+    document.getElementById('txtFiltrar').addEventListener('keyup',(event)=>{
+        if (event.key === "Enter") {
+            document.getElementById("btnBuscar").click();
+        }
+        if (event.keycode == 13) {
+            document.getElementById("btnBuscar").click();
+        }
+    })
+
     document.getElementById('btnBuscar').addEventListener('click',()=>{
         get_listado();
     })
+
+
+
+
+    let btnActualizarFotos = document.getElementById('btnActualizarFotos');
+    btnActualizarFotos.addEventListener('click',()=>{
+
+
+        F.Confirmacion('¿Está seguro que desea ACTUALIZAR estas fotos?')
+        .then((value)=>{
+            if(value==true){
+
+                
+                    let f1 = document.getElementById('img1E').src;
+                    let f2 = document.getElementById('img2E').src;
+                    let f3 = document.getElementById('img3E').src;
+
+                    btnActualizarFotos.disabled = true;
+                    btnActualizarFotos.innerHTML = `<i class="fal fa-save fa-spin"></i>`;
+
+                    update_fotos(selected_codempresa,selected_codcliente,f1,f2,f3)
+                    .then(()=>{
+                        F.Aviso('Fotos actualizadas exitosamente!!');
+                        
+                        btnActualizarFotos.disabled = false;
+                        btnActualizarFotos.innerHTML = `<i class="fal fa-save"></i>`;
+
+                        $("#modal_fotos").modal('hide');
+                    })
+                    .catch(()=>{
+                        
+                        F.AvisoError('No se pudo cargar las fotos nuevas, intentelo de nuevo');
+
+                        btnActualizarFotos.disabled = false;
+                        btnActualizarFotos.innerHTML = `<i class="fal fa-save"></i>`;
+                    })
+
+
+            }
+        })
+
+    });
+
+
+
 
     F.slideAnimationTabs();
 
@@ -378,19 +695,11 @@ function preview_img(idFile,idImage){
     let file = document.getElementById(idFile).files[0]
     F.converBase64(file)
     .then((imagen)=>{
-        console.log(imagen)
+        //console.log(imagen)
         document.getElementById(idImage).src = imagen;
     })
 
-    console.log(valor)
-
-    return;
-
-    let globalPic = new Image();
-    globalPic.onload = function() {
-        document.getElementById(idImage).src = globalPic.src;
-    }
-    globalPic.src=what.value;
+   
 }
 
 
@@ -428,9 +737,9 @@ function limpiar_datos(){
         document.getElementById('txtFoto2').value = '';
         document.getElementById('txtFoto3').value = '';
 
-        document.getElementById('img1').src = './favicon.png';
-        document.getElementById('img2').src = './favicon.png';
-        document.getElementById('img3').src = './favicon.png';
+        document.getElementById('img1').src = '';
+        document.getElementById('img2').src = '';
+        document.getElementById('img3').src = '';
 };
 
 
@@ -442,9 +751,12 @@ function get_listado(){
     container.innerHTML = GlobalLoader;
     let str = '';
 
+    let lastupdate = F.devuelveFecha('txtFechaAtencion'); //document.getElementById("cmbStatus").value;
+
 
     axios.post('/listado_clientes',{
-        filtro:filtro
+        filtro:filtro,
+        lastupdate:lastupdate
     })
     .then((response) => {
         let data = response.data;
@@ -452,9 +764,15 @@ function get_listado(){
             data.recordset.map((r)=>{
                 str += `
                                 <tr>
-                                    <td>${r.EMPRESA}</td>
+                                    <td>${r.EMPRESA}
+                                        <br>
+                                        <small>A:${F.convertDateNormal(r.LASTUPDATE)}</small>
+                                    </td>
                                     <td>${r.CODIGO}</td>
-                                    <td>${r.NOMBRE}</td>
+                                    <td>${r.NOMBRE}
+                                        <br>
+                                        <small class="negrita text-info">${F.getEdad(r.FECHA_NACIMIENTO)}</small>
+                                    </td>
                                     <td>${r.AREA}
                                         <br>
                                         <small>${r.SECTOR}</small>
@@ -462,8 +780,16 @@ function get_listado(){
                                     <td>${r.SALUD}</td>
                                     <td>${r.ALIMENTOS}</td>
                                     <td>${r.PULMONES}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>
+                                        <button class="btn btn-md btn-circle hand shadow btn-success" onclick="get_fotos_cliente('${r.CODEMPRESA}','${r.CODIGO}','${r.NOMBRE}')">
+                                            <i class="fal fa-camera"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-md btn-circle hand shadow btn-info" onclick="get_datos_cliente('${r.CODEMPRESA}','${r.CODIGO}')">
+                                            <i class="fal fa-edit"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                 `
             })
@@ -488,10 +814,11 @@ function insert_cliente(){
     let codempresa = document.getElementById('cmbEmpresa').value;
     let codigo = document.getElementById('txtCodigo').value;
     let dpi = document.getElementById('txtDPI').value;
-    let nombre = document.getElementById('txtNombre').value;
-    let fecha = F.devuelveFecha('txtFechaNacimiento');
-    let area = document.getElementById('txtAreaTrabajo').value;
-    let sector = document.getElementById('txtSector').value;
+    let nombre = F.limpiarTexto(document.getElementById('txtNombre').value);
+    let fechanacimiento = F.devuelveFecha('txtFechaNacimiento');
+    let fecha = F.getFecha();
+    let area = F.limpiarTexto(document.getElementById('txtAreaTrabajo').value);
+    let sector = F.limpiarTexto(document.getElementById('txtSector').value);
     let tsalud = document.getElementById('cmbTSalud').value;
     let talimentos = document.getElementById('cmbTAlimentacion').value;
     let tpulmones = document.getElementById('cmbTPulmones').value;
@@ -507,6 +834,7 @@ function insert_cliente(){
             dpi:dpi,
             nombre:nombre,
             fecha:fecha,
+            fechanacimiento:fechanacimiento,
             area:area,
             sector:sector,
             tsalud:tsalud,
@@ -528,4 +856,119 @@ function insert_cliente(){
         });
     })
 
-}
+};
+
+
+function get_fotos_cliente(codempresa,codcliente,nomclie){
+
+        $("#modal_fotos").modal('show');
+
+        document.getElementById('img1E').src = '';
+        document.getElementById('img2E').src = '';
+        document.getElementById('img3E').src = '';
+
+        selected_codempresa = codempresa;
+        selected_codcliente = codcliente;
+
+        document.getElementById('lbNomcliente').innerText = nomclie;
+        document.getElementById('lbCodcliente').innerText = codcliente;
+
+        document.getElementById('lbStatusFotos').innerHTML = 'Cargando fotos...' + GlobalLoader
+
+        document.getElementById('btnActualizarFotos').disabled = true;
+
+        get_data_fotos_cliente(codempresa,codcliente)
+        .then((data)=>{
+            data.recordset.map((r)=>{
+                document.getElementById('img1E').src = r.FOTO_SELFIE;
+                document.getElementById('img2E').src = r.FOTO_DPI_1;
+                document.getElementById('img3E').src = r.FOTO_DPI_2;
+            })
+            document.getElementById('lbStatusFotos').innerText = '';
+            document.getElementById('btnActualizarFotos').disabled = false;
+        
+        })
+        .catch(()=>{
+            F.AvisoError('No se cargaron las fotos');
+            document.getElementById('lbStatusFotos').innerText = 'No se cargaron las fotos';
+            document.getElementById('img1E').src = '';
+            document.getElementById('img2E').src = '';
+            document.getElementById('img3E').src = '';
+            document.getElementById('btnActualizarFotos').disabled = false;
+        })
+
+};
+
+function get_data_fotos_cliente(codempresa,codcliente){
+    return new Promise((resolve,reject)=>{
+        axios.post('/fotos_cliente',{
+            codempresa:codempresa,
+            codigo:codcliente
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+};
+
+function update_fotos(codempresa,codcliente,f1,f2,f3){
+    return new Promise((resolve,reject)=>{
+        axios.post('/update_fotos_cliente',{
+            codempresa:codempresa,
+            codigo:codcliente,
+            f1:f1,
+            f2:f2,
+            f3:f3,
+            fecha: F.getFecha()
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+};
+
+
+function get_datos_cliente(codempresa,codcliente){
+    
+   
+    $("#modal_datos").modal('show');
+
+
+
+};
+
+function get_data_datos_cliente(codempresa,codcliente){
+    return new Promise((resolve,reject)=>{
+        axios.post('/datos_cliente',{
+            codempresa:codempresa,
+            codigo:codcliente
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data); 
+            }else{
+                reject(); 
+            }             
+        }, (error) => {
+            reject();
+        });
+    })
+
+};

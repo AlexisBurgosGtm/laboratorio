@@ -9,6 +9,11 @@ let GlobalUsuario = '';
 let GlobalPass = '';
 let GlobalNivelUsuario = 0;
 
+
+let selected_codcliente = 0;
+let selected_codempresa = 0;
+
+
 let GlobalSignoMoneda = 'Q'
 
 
@@ -20,9 +25,12 @@ let navmenu = document.getElementById('js-nav-menu');
 let GlobalLoader = `
 
                 <div>
-                    <div class="spinner-border text-naranja" role="status"><span class="sr-only">Loading...</span></div>
-                    <div class="spinner-border text-naranja" role="status"><span class="sr-only">Loading...</span></div>
-                    <div class="spinner-border text-naranja" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
+                    <div class="spinner-border text-secondary" role="status"><span class="sr-only">Loading...</span></div>
                 </div>
                 `
                
