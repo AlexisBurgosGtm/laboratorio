@@ -344,6 +344,9 @@ function getView(){
                                                 <label class="negrita">Foto Selfie</label>
                                                 <input type="file" id="txtFoto1E" class="form-control" onchange="preview_img('txtFoto1E','img1E');">
                                                 <img src="" id="img1E" width="150px" height="150px">
+                                                <a class="btn btn-info btn-circle btn-md hand shadow" download="Selfie.png" target="_blank" href="" id="linkF1">
+                                                    <i class="fal fa-download"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -353,6 +356,9 @@ function getView(){
                                                 <label class="negrita">Foto DPI Front</label>
                                                 <input type="file" id="txtFoto2E" class="form-control" onchange="preview_img('txtFoto2E','img2E');">
                                                 <img src="" id="img2E" width="150px" height="150px">
+                                                <a class="btn btn-info btn-circle btn-md hand shadow"  download="DPIFront.png" target="_blank"  href="" id="linkF2">
+                                                    <i class="fal fa-download"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -362,6 +368,9 @@ function getView(){
                                                 <label class="negrita">Foto DPI Tras</label>
                                                 <input type="file" id="txtFoto3E" class="form-control" onchange="preview_img('txtFoto3E','img3E');">
                                                 <img src="" id="img3E" width="150px" height="150px">
+                                                <a class="btn btn-info btn-circle btn-md hand shadow"  download="DPITras.png" target="_blank"  href="" id="linkF3">
+                                                    <i class="fal fa-download"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -958,6 +967,11 @@ function get_fotos_cliente(codempresa,codcliente,nomclie){
         document.getElementById('img2E').src = '';
         document.getElementById('img3E').src = '';
 
+        document.getElementById('linkF1').href = '';
+        document.getElementById('linkF2').href = '';
+        document.getElementById('linkF3').href = '';
+
+
         selected_codempresa = codempresa;
         selected_codcliente = codcliente;
 
@@ -974,6 +988,10 @@ function get_fotos_cliente(codempresa,codcliente,nomclie){
                 document.getElementById('img1E').src = r.FOTO_SELFIE;
                 document.getElementById('img2E').src = r.FOTO_DPI_1;
                 document.getElementById('img3E').src = r.FOTO_DPI_2;
+
+                document.getElementById('linkF1').href = r.FOTO_SELFIE
+                document.getElementById('linkF2').href = r.FOTO_DPI_1;
+                document.getElementById('linkF3').href = r.FOTO_DPI_2;
             })
             document.getElementById('lbStatusFotos').innerText = '';
             document.getElementById('btnActualizarFotos').disabled = false;
@@ -985,6 +1003,11 @@ function get_fotos_cliente(codempresa,codcliente,nomclie){
             document.getElementById('img1E').src = '';
             document.getElementById('img2E').src = '';
             document.getElementById('img3E').src = '';
+
+            document.getElementById('linkF1').href = '';
+            document.getElementById('linkF2').href = '';
+            document.getElementById('linkF3').href = '';
+
             document.getElementById('btnActualizarFotos').disabled = false;
         })
 
