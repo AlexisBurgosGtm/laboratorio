@@ -576,8 +576,21 @@ let F = {
     
     },
     getImageFromBase64:(data)=>{
+
+        const yourBase64 = data;
+
+        const file = new File(
+          [Uint8Array.from(btoa(yourBase64), (m) => m.codePointAt(0))],
+          'filename.png',
+          { type: 'image/png' }
+        );
+
+        return file;
+
+        /*
         let buff = new Buffer(data, 'base64');
         return fs.writeFileSync('stack-abuse-logo-out.png', buff);
+        */
     },
     getEdad:(fech)=>{
       
@@ -651,7 +664,7 @@ let F = {
       let img = F.getImageFromBase64(file);
 
       console.log(img)
-      
+
       new Compressor(img, {
         quality: 0.6,
     
@@ -671,6 +684,13 @@ let F = {
       })
 
     },
+    blobToBase64:(blob)=>{
+        return new Promise((resolve, _) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+    },
     detectarPc:()=>{
           let navegador = navigator.userAgent;
           if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
@@ -680,7 +700,7 @@ let F = {
               //console.log("No estás usando un móvil");
             return 'pc';
           }
-    },
+    }
 };
 
 //export default funciones;

@@ -265,9 +265,6 @@ function getView(){
             </button> 
             `
         },
-        vista_editar:()=>{
-
-        },
         modal_empresas:()=>{
             return `
         <div class="modal fade js-modal-settings modal-backdrop-transparent  modal-with-scroll" tabindex="-1" role="dialog" aria-hidden="true" id="modal_menu_principal">
@@ -696,11 +693,35 @@ function initView(){
 function preview_img(idFile,idImage){
 
     let file = document.getElementById(idFile).files[0]
-    F.converBase64(file)
-    .then((imagen)=>{
-        //console.log(imagen)
-        document.getElementById(idImage).src = imagen;
-    })
+
+    if (!file) {
+      return;
+    }
+  
+    new Compressor(file, {
+      quality: 0.6,
+  
+      // The compression process is asynchronous,
+      // which means you have to access the `result` in the `success` hook function.
+      success(result) {
+  
+            //console.log(result);
+            F.converBase64(result) //file
+            .then((imagen)=>{
+                //console.log(imagen)
+                document.getElementById(idImage).src = imagen;
+            })
+
+      },
+      error(err) {
+        console.log('error en foto:')
+        console.log(err.message);
+        ocument.getElementById(idImage).src = '';
+      },
+    });
+
+
+ 
 
    
 }

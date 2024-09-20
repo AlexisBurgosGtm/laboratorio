@@ -182,6 +182,27 @@ app.post("/fotos_cliente",function(req,res){
 }); 
 
 
+app.post("/datos_cliente",function(req,res){
+
+  const {codempresa,codigo} = req.body;
+
+
+  let qry = `
+      SELECT CODEMPRESA,
+            DPI,NOMBRE, FECHA_NACIMIENTO,
+            AREA_TRABAJO, SECTOR,
+            TARJETA_SALUD, TARJETA_ALIMENTOS,
+            TARJETA_PULMONES,LASTUPDATE 
+      FROM CLIENTES 
+      WHERE CODEMPRESA='${codempresa}' AND CODIGO='${codigo}';
+
+  `
+
+  execute.Query(res,qry);
+
+}); 
+
+
 app.post("/update_fotos_cliente",function(req,res){
 
   const {codempresa,codigo,fecha,f1,f2,f3} = req.body;

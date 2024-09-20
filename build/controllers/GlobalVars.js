@@ -1,6 +1,6 @@
 
 
-let versionapp = "Modif: 19.09.2024"
+let versionapp = "Modif: 19.09.2024 h18:55"
 
 
 let GlobalClave = '123'
