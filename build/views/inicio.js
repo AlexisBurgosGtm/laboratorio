@@ -101,7 +101,8 @@ function getView(){
                             </select>
                         </div>
                     </div>
-                    
+                    <br>
+                    <h5 class="negrita text-danger" id="lbTotal"></h5>
                     <br>
 
                     <div class="table-responsive col-12">
@@ -849,6 +850,8 @@ function get_listado(){
     container.innerHTML = GlobalLoader;
     let str = '';
 
+    let total = 0;
+
     let lastupdate = F.devuelveFecha('txtFechaAtencion'); //document.getElementById("cmbStatus").value;
     let st = document.getElementById('cmbTipoLista').value;
 
@@ -862,6 +865,7 @@ function get_listado(){
         let data = response.data;
         if(Number(data.rowsAffected[0])>0){
             data.recordset.map((r)=>{
+                total += 1;
                 str += `
                                 <tr>
                                     <td>${r.EMPRESA}
@@ -895,11 +899,14 @@ function get_listado(){
             })
 
             container.innerHTML = str;
+            document.getElementById('lbTotal').innerText = `Total registros: ${total}`
         }else{
             container.innerHTML = 'No hay datos...'
+            document.getElementById('lbTotal').innerText = ''
         }             
     }, (error) => {
         container.innerHTML = 'No hay datos...'
+        document.getElementById('lbTotal').innerText = ''
     });
 
 
